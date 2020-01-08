@@ -45,7 +45,7 @@ export default function App(){
 
   if(data === null){
     return(
-      <View style={styles.containerLoading}>
+      <View style={styles.container}>
         <View style={styles.containerError}>
           <Text style={styles.textError}>Não Foi Possível completar a solicitação</Text>
         </View>
@@ -66,7 +66,9 @@ export default function App(){
 const styles = StyleSheet.create({
   containerLoading: {
     flex: 1,
-    backgroundColor: '#222'
+    backgroundColor: '#222',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   textError: {
     fontSize: 22,
