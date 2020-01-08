@@ -5,6 +5,7 @@ const Footer = ({data, searchCity}) => {
 
     const [city, setCity] = useState()
 
+
     return(
         <View style={styles.container}>
             <View style={styles.inputArea}>
@@ -13,11 +14,11 @@ const Footer = ({data, searchCity}) => {
                     <Text style={styles.txtInput}>Buscar</Text>
                 </TouchableOpacity>
             </View>
-            <View style={styles.areaInfo}>
+            {data !== undefined && <View style={styles.areaInfo}>
                 <Text style={styles.textInfo}>Pressão Atmosférica: {data.pressure} hPa</Text>
                 <Text style={styles.textInfo}>Umidade do Ar: {data.humidity}%</Text>
                 <Text style={styles.textInfo}>Velocidade do Vento: {data.wind.toFixed(2)} km/h</Text>
-            </View>
+            </View>}
       </View>
     )
 }

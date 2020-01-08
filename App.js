@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity, Image, TextInput, Keyboard } from 'react-native'
-import api, { apiKey } from './src/services/api'
+import { View, Text, ActivityIndicator, StyleSheet, Keyboard } from 'react-native'
+import api, { apiKey, loadWeather, loadCity } from './src/services/api'
 import Geolocation from '@react-native-community/geolocation'
 import Header from './src/components/Header'
 import Container from './src/components/Container'
@@ -11,79 +11,45 @@ export default function App(){
   const [data, setData] = useState({})
   const [loading, setLoading] = useState(true)
 
-  const update = () => {
-    setLoading(true)
-      api.get(`?lat=${data.lat}&lon=${data.lon}&appid=${apiKey}&lang=pt`)
-      .then(info => {
-        setData({
-          lat: info.data.coord.lat,
-          lon: info.data.coord.lon,
-          city: info.data.name,
-          country: info.data.sys.country,
-          temp: info.data.main.temp - 273.15,
-          weather: info.data.weather[0].main,
-          weatherDescription: info.data.weather[0].description,
-          icon: info.data.weather[0].icon,
-          feels: info.data.main.feels_like -273.15,
-          pressure: info.data.main.pressure,
-          wind: info.data.wind.speed * 3.6,
-          humidity: info.data.main.humidity
-        })
-        setLoading(false)
-      })
+  const update = async () => {
+      setLoading(true)
+      const response = await loadWeather(data.lat, data.lon)
+      setData(response)
+      setLoading(false)
   }
 
-  const searchCity = city => {
+  const searchCity = async city => {
     setLoading(true)
-    api.get(`?q=${city}&appid=${apiKey}&lang=pt`).then(info => {
-      setData({
-        lat: info.data.coord.lat,
-        lon: info.data.coord.lon,
-        city: info.data.name,
-        country: info.data.sys.country,
-        temp: info.data.main.temp - 273.15,
-        weather: info.data.weather[0].main,
-        weatherDescription: info.data.weather[0].description,
-        icon: info.data.weather[0].icon,
-        feels: info.data.main.feels_like -273.15,
-        pressure: info.data.main.pressure,
-        wind: info.data.wind.speed * 3.6,
-        humidity: info.data.main.humidity
-      })
-      setLoading(false)
-      Keyboard.dismiss()
-    })
+    const data = await loadCity(city)
+    setData(data)
+    setLoading(false)
+    Keyboard.dismiss()
+
   }
 
   useEffect(() =>{
-    Geolocation.getCurrentPosition(response => {
-      api.get(`?lat=${response.coords.latitude}&lon=${response.coords.longitude}&appid=${apiKey}&lang=pt`)
-      .then(info => {
-        setData({
-          lat: info.data.coord.lat,
-          lon: info.data.coord.lon,
-          city: info.data.name,
-          country: info.data.sys.country,
-          temp: info.data.main.temp - 273.15,
-          weather: info.data.weather[0].main,
-          weatherDescription: info.data.weather[0].description,
-          icon: info.data.weather[0].icon,
-          feels: info.data.main.feels_like -273.15,
-          pressure: info.data.main.pressure,
-          wind: info.data.wind.speed * 3.6,
-          humidity: info.data.main.humidity
-        })
-        setLoading(false)
-      })
+    Geolocation.getCurrentPosition(async response => {
+      const data = await loadWeather(response.coords.latitude, response.coords.longitude)
+      setData(data)
+      setLoading(false)
     })
   }, [])
-
-  
 
   if(loading === true){
     return(
       <View style={styles.containerLoading}>
         <ActivityIndicator size='large'/>
+      </View>
+    ) 
+  }
+
+  if(data === null){
+    return(
+      <View style={styles.containerLoading}>
+        <View style={styles.containerError}>
+          <Text style={styles.textError}>Não Foi Possível completar a solicitação</Text>
+        </View>
+        <Footer searchCity={searchCity}/>
       </View>
     ) 
   }
@@ -100,9 +66,17 @@ export default function App(){
 const styles = StyleSheet.create({
   containerLoading: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#222'
+  },
+  textError: {
+    fontSize: 22,
+    color: '#fff',
+    textAlign: 'center'
+  },
+  containerError: {
+    flex: 4,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   container: {
     flex: 1,
