@@ -12,3 +12,6 @@ Aplicativo para Android com a finalidade de mostrar o clima na região em que o 
     $ cd climatic/
     $ yarn or npm install
     $ react-native run-android
+
+# Download
+- Link para download do apk - http://bit.ly/climaticapp
