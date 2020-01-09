@@ -43,8 +43,7 @@ const styles = StyleSheet.create({
     },
     textInfo: {
         fontSize: 20,
-        fontWeight: 'bold',
-        margin: 5
+        margin: 5,
     },
     input: {
       fontSize: 16,

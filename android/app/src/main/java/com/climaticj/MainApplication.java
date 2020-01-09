@@ -1,4 +1,4 @@
-package com.clima;
+package com.climaticj;
 
 import android.app.Application;
 import android.content.Context;

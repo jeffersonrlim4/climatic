@@ -1,4 +1,4 @@
-package com.clima;
+package com.climaticj;
 
 import com.facebook.react.ReactActivity;
 
